@@ -1,24 +1,25 @@
 
-sql
-Copy
-Edit
 WITH all_flights AS (
     SELECT
         origin AS airport_code,
+        dest AS connected_airport,
         tail_number,
         airline,
         cancelled,
-        diverted
+        diverted,
+        flight_date
     FROM {{ ref('prep_flights') }}
     
     UNION ALL
     
     SELECT
         dest AS airport_code,
+        origin AS connected_airport,
         tail_number,
         airline,
         cancelled,
-        diverted
+        diverted,
+        flight_date
     FROM {{ ref('prep_flights') }}
 ),
 
@@ -31,10 +32,10 @@ stats_per_airport AS (
         COUNT(*) FILTER (WHERE cancelled = 0 AND diverted = 0) AS total_completed,
         COUNT(DISTINCT CASE WHEN airport_code = origin THEN dest END) AS unique_departure_connections,
         COUNT(DISTINCT CASE WHEN airport_code = dest THEN origin END) AS unique_arrival_connections,
-        COUNT(DISTINCT CASE WHEN tail_number IS NOT NULL THEN tail_number END) 
-            / NULLIF(COUNT(DISTINCT flight_date), 0) AS avg_unique_airplanes, -- optional
-        COUNT(DISTINCT CASE WHEN airline IS NOT NULL THEN airline END) 
-            / NULLIF(COUNT(DISTINCT flight_date), 0) AS avg_unique_airlines -- optional
+        COUNT(DISTINCT tail_number) 
+            / NULLIF(COUNT(DISTINCT flight_date), 0) AS avg_unique_airplanes,
+        COUNT(DISTINCT airline) 
+            / NULLIF(COUNT(DISTINCT flight_date), 0) AS avg_unique_airlines
     FROM {{ ref('prep_flights') }}
     GROUP BY airport_code
 ),
