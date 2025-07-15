@@ -1,24 +1,4 @@
 
-WITH all_flights AS (
-    SELECT
-        origin AS airport_code,
-        tail_number,
-        airline,
-        cancelled,
-        diverted
-    FROM {{ ref('prep_flights') }}
-    
-    UNION ALL
-    
-    SELECT
-        dest AS airport_code,
-        tail_number,
-        airline,
-        cancelled,
-        diverted
-    FROM {{ ref('prep_flights') }}
-
-
 WITH departures AS ( 
 	SELECT origin AS faa
 			,COUNT(DISTINCT dest) AS nunique_to
@@ -31,7 +11,6 @@ WITH departures AS (
 	FROM {{ref('prep_flights')}} 
 	GROUP BY origin
 	ORDER BY origin
-
 ),
 arrivals AS (
 	SELECT dest AS faa
