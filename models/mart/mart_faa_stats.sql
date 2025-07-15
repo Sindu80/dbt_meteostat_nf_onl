@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-dt 
-sql
-Copy
-Edit
+
 WITH all_flights AS (
     SELECT
         origin AS airport_code,
@@ -21,7 +17,7 @@ WITH all_flights AS (
         cancelled,
         diverted
     FROM {{ ref('prep_flights') }}
-=======
+
 
 WITH departures AS ( 
 	SELECT origin AS faa
@@ -35,7 +31,7 @@ WITH departures AS (
 	FROM {{ref('prep_flights')}} 
 	GROUP BY origin
 	ORDER BY origin
->>>>>>> 36238d954b670f9a3ff69959796bceb177c611d9
+
 ),
 arrivals AS (
 	SELECT dest AS faa
